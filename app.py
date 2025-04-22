@@ -6,16 +6,18 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'votre_clé_secrète'  # Nécessaire pour les messages flash
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'votre_clé_secrète')
 
 # Configuration de la base de données
 def get_db_connection():
     try:
+        # Railway fournit ces variables d'environnement automatiquement
         conn = psycopg2.connect(
-            host=os.getenv('DB_HOST', 'localhost'),
-            database=os.getenv('DB_NAME', 'noms_db'),
-            user=os.getenv('DB_USER', 'postgres'),
-            password=os.getenv('DB_PASSWORD', '')
+            host=os.getenv('DATABASE_URL').split('@')[1].split(':')[0],  # Host
+            database=os.getenv('DATABASE_URL').split('/')[-1],  # Database name
+            user=os.getenv('DATABASE_URL').split('://')[1].split(':')[0],  # User
+            password=os.getenv('DATABASE_URL').split('://')[1].split('@')[0].split(':')[1],  # Password
+            port=os.getenv('DATABASE_URL').split('@')[1].split(':')[1].split('/')[0]  # Port
         )
         return conn
     except psycopg2.Error as e:

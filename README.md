@@ -13,7 +13,10 @@ Une application Flask simple qui permet d'ajouter et de visualiser des noms dans
 
 1. **Configuration de Railway**
    - Créez un nouveau projet sur Railway
-   - Ajoutez un service PostgreSQL
+   - Ajoutez un service PostgreSQL :
+     1. Cliquez sur "New Project"
+     2. Sélectionnez "Provision PostgreSQL"
+     3. Attendez que la base de données soit créée
    - Obtenez votre token d'authentification :
      ```bash
      railway token
@@ -26,8 +29,14 @@ Une application Flask simple qui permet d'ajouter et de visualiser des noms dans
      - `RAILWAY_TOKEN` : Votre token d'authentification Railway
 
 3. **Configuration de la base de données**
-   - Railway fournira automatiquement les variables d'environnement pour la base de données
-   - Les variables seront injectées dans l'application lors du déploiement
+   - Railway fournit automatiquement la variable d'environnement `DATABASE_URL`
+   - Cette URL contient toutes les informations de connexion :
+     - Host
+     - Port
+     - Nom de la base de données
+     - Utilisateur
+     - Mot de passe
+   - L'application utilise automatiquement ces informations
 
 ### Déploiement automatique
 
@@ -60,7 +69,11 @@ source .venv/bin/activate  # Sur Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Configurez les variables d'environnement dans un fichier `.env`
+4. Configurez les variables d'environnement dans un fichier `.env` :
+```bash
+DATABASE_URL=postgresql://user:password@host:port/database
+FLASK_SECRET_KEY=votre_clé_secrète
+```
 
 5. Lancez l'application :
 ```bash
