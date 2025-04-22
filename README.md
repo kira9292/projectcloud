@@ -29,14 +29,15 @@ Une application Flask simple qui permet d'ajouter et de visualiser des noms dans
      - `RAILWAY_TOKEN` : Votre token d'authentification Railway
 
 3. **Configuration de la base de données**
-   - Railway fournit automatiquement la variable d'environnement `DATABASE_URL`
-   - Cette URL contient toutes les informations de connexion :
-     - Host
-     - Port
-     - Nom de la base de données
-     - Utilisateur
-     - Mot de passe
-   - L'application utilise automatiquement ces informations
+   - Railway fournit automatiquement les variables d'environnement suivantes :
+     - `DATABASE_URL` : L'URL complète de connexion à la base de données (recommandé)
+     - OU les variables individuelles :
+       - `PGHOST` : L'hôte de la base de données
+       - `PGDATABASE` : Le nom de la base de données
+       - `PGUSER` : L'utilisateur de la base de données
+       - `PGPASSWORD` : Le mot de passe de la base de données
+       - `PGPORT` : Le port de la base de données
+   - L'application utilise `DATABASE_URL` si disponible, sinon elle utilise les variables individuelles
 
 ### Déploiement automatique
 
@@ -71,7 +72,16 @@ pip install -r requirements.txt
 
 4. Configurez les variables d'environnement dans un fichier `.env` :
 ```bash
+# Option 1: Utiliser DATABASE_URL (recommandé)
 DATABASE_URL=postgresql://user:password@host:port/database
+
+# Option 2: Utiliser les variables individuelles
+PGHOST=postgres.railway.internal
+PGDATABASE=railway
+PGUSER=postgres
+PGPASSWORD=votre_mot_de_passe
+PGPORT=5432
+
 FLASK_SECRET_KEY=votre_clé_secrète
 ```
 

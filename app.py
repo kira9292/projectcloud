@@ -11,14 +11,19 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY', 'votre_clé_secrète')
 # Configuration de la base de données
 def get_db_connection():
     try:
-        # Railway fournit ces variables d'environnement automatiquement
-        conn = psycopg2.connect(
-            host=os.getenv('DATABASE_URL').split('@')[1].split(':')[0],  # Host
-            database=os.getenv('DATABASE_URL').split('/')[-1],  # Database name
-            user=os.getenv('DATABASE_URL').split('://')[1].split(':')[0],  # User
-            password=os.getenv('DATABASE_URL').split('://')[1].split('@')[0].split(':')[1],  # Password
-            port=os.getenv('DATABASE_URL').split('@')[1].split(':')[1].split('/')[0]  # Port
-        )
+        # Essayer d'abord d'utiliser DATABASE_URL si disponible
+        database_url = os.getenv('DATABASE_URL')
+        if database_url:
+            conn = psycopg2.connect(database_url)
+        else:
+            # Fallback sur les variables individuelles
+            conn = psycopg2.connect(
+                host=os.getenv('PGHOST', 'postgres.railway.internal'),
+                database=os.getenv('PGDATABASE', 'railway'),
+                user=os.getenv('PGUSER', 'postgres'),
+                password=os.getenv('PGPASSWORD'),
+                port=os.getenv('PGPORT', '5432')
+            )
         return conn
     except psycopg2.Error as e:
         print(f"Erreur de connexion à la base de données: {e}")
