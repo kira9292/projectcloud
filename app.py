@@ -2,32 +2,52 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import psycopg2
 import os
 from dotenv import load_dotenv
+import time
 
+# Charger les variables d'environnement
 load_dotenv()
+
+# Vérifier que les variables sont bien chargées
+print("Vérification des variables d'environnement...")
+print(f"DATABASE_URL: {os.getenv('DATABASE_URL')}")
+print(f"PGHOST: {os.getenv('PGHOST')}")
+print(f"PGDATABASE: {os.getenv('PGDATABASE')}")
+print(f"PGUSER: {os.getenv('PGUSER')}")
+print(f"PGPORT: {os.getenv('PGPORT')}")
 
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'votre_clé_secrète')
 
 # Configuration de la base de données
-def get_db_connection():
-    try:
-        # Essayer d'abord d'utiliser DATABASE_URL si disponible
-        database_url = os.getenv('DATABASE_URL')
-        if database_url:
-            conn = psycopg2.connect(database_url)
-        else:
-            # Fallback sur les variables individuelles
-            conn = psycopg2.connect(
-                host=os.getenv('PGHOST', 'postgres.railway.internal'),
-                database=os.getenv('PGDATABASE', 'railway'),
-                user=os.getenv('PGUSER', 'postgres'),
-                password=os.getenv('PGPASSWORD'),
-                port=os.getenv('PGPORT', '5432')
-            )
-        return conn
-    except psycopg2.Error as e:
-        print(f"Erreur de connexion à la base de données: {e}")
-        return None
+def get_db_connection(max_attempts=3, delay=5):
+    for attempt in range(max_attempts):
+        try:
+            print(f"Tentative de connexion {attempt + 1}/{max_attempts}...")
+            database_url = os.getenv('DATABASE_URL')
+            
+            if database_url:
+                print("Utilisation de DATABASE_URL pour la connexion")
+                conn = psycopg2.connect(database_url, connect_timeout=10)
+            else:
+                print("Utilisation des variables individuelles pour la connexion")
+                conn = psycopg2.connect(
+                    host=os.getenv('PGHOST', 'postgres.railway.internal'),
+                    database=os.getenv('PGDATABASE', 'railway'),
+                    user=os.getenv('PGUSER', 'postgres'),
+                    password=os.getenv('PGPASSWORD'),
+                    port=os.getenv('PGPORT', '5432'),
+                    connect_timeout=10
+                )
+            print("Connexion réussie!")
+            return conn
+        except psycopg2.Error as e:
+            print(f"Erreur de connexion (tentative {attempt + 1}): {e}")
+            if attempt < max_attempts - 1:
+                print(f"Attente de {delay} secondes avant la prochaine tentative...")
+                time.sleep(delay)
+            else:
+                print("Nombre maximum de tentatives atteint")
+                return None
 
 # Création de la table si elle n'existe pas
 def init_db():
