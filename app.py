@@ -36,10 +36,10 @@ def get_db_connection(max_attempts=3, delay=5):
                 print("Postgres.DATABASE_URL non trouvé, tentative avec les variables individuelles")
                 conn = psycopg2.connect(
                     host=os.getenv('RAILWAY_PRIVATE_DOMAIN', 'postgres.railway.internal'),
-                    database=os.getenv('Postgres.PGDATABASE', 'railway'),
-                    user=os.getenv('Postgres.PGUSER', 'postgres'),
-                    password=os.getenv('Postgres.PGPASSWORD','XryfpIdaudgshtRgNYIEgisVMDccpWtn'),
-                    port=os.getenv('Postgres.PGPORT', '5432'),
+                    database=os.getenv('PGDATABASE', 'railway'),
+                    user=os.getenv('PGUSER', 'postgres'),
+                    password=os.getenv('PGPASSWORD','XryfpIdaudgshtRgNYIEgisVMDccpWtn'),
+                    port=os.getenv('PGPORT', '5432'),
                     connect_timeout=10
                 )
             print("Connexion réussie!")
