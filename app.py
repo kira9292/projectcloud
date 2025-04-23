@@ -23,23 +23,16 @@ def get_db_connection(max_attempts=3, delay=5):
     for attempt in range(max_attempts):
         try:
             print(f"Tentative de connexion {attempt + 1}/{max_attempts}...")
-            # Utiliser directement ${{ Postgres.DATABASE_URL }}
-            database_url = "${{ Postgres.DATABASE_URL }}"
+            
+            # Utiliser le nom d'hôte privé de Railway
+            private_host = os.getenv('RAILWAY_PRIVATE_DOMAIN', 'postgres.railway.internal')
+            print(f"Tentative de connexion à l'hôte privé: {private_host}")
+            
+            # Construire l'URL de connexion pour le réseau privé
+            database_url = f"postgresql://{os.getenv('PGUSER')}:{os.getenv('PGPASSWORD')}@{private_host}:{os.getenv('PGPORT')}/{os.getenv('PGDATABASE')}"
             print(f"URL de connexion: {database_url}")
             
-            if database_url:
-                print("Utilisation de ${{ Postgres.DATABASE_URL }} pour la connexion")
-                conn = psycopg2.connect(database_url, connect_timeout=10)
-            else:
-                print("Utilisation des variables individuelles pour la connexion")
-                conn = psycopg2.connect(
-                    host=os.getenv('PGHOST', 'postgres.railway.internal'),
-                    database=os.getenv('PGDATABASE', 'railway'),
-                    user=os.getenv('PGUSER', 'postgres'),
-                    password=os.getenv('PGPASSWORD'),
-                    port=os.getenv('PGPORT', '5432'),
-                    connect_timeout=10
-                )
+            conn = psycopg2.connect(database_url, connect_timeout=10)
             print("Connexion réussie!")
             return conn
         except psycopg2.Error as e:

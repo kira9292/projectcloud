@@ -31,10 +31,10 @@ COPY . .
 # Configuration des variables d'environnement
 ENV FLASK_APP=app.py
 ENV FLASK_ENV=production
-ENV PORT=5000
+ENV HOSTNAME=::
 
-# Exposition du port
+# Exposition du port (Railway utilise la variable PORT)
 EXPOSE $PORT
 
-# Commande pour démarrer l'application avec Gunicorn
-CMD gunicorn --bind 0.0.0.0:$PORT app:app 
+# Commande pour démarrer l'application avec Gunicorn en écoutant sur IPv6
+CMD gunicorn --bind [::]:$PORT app:app 
