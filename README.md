@@ -65,15 +65,10 @@ flask run
 - Les connexions à la base de données sont sécurisées
 - Protection contre les injections SQL
 
-## 📝 Licence
+## 📝 lien vers l'appli
+```bash
+https://projectcloud-production.up.railway.app/
+```
 
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
 
-## 🤝 Contribution
 
-Les contributions sont les bienvenues ! N'hésitez pas à :
-1. Fork le projet
-2. Créer une branche pour votre fonctionnalité
-3. Commiter vos changements
-4. Pousser vers la branche
-5. Ouvrir une Pull Request 
