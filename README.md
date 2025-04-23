@@ -59,11 +59,6 @@ FLASK_ENV=development
 flask run
 ```
 
-## 🔒 Sécurité
-
-- Les variables d'environnement sensibles sont gérées par Railway
-- Les connexions à la base de données sont sécurisées
-- Protection contre les injections SQL
 
 ## 📝 lien vers l'appli
 ```bash
