@@ -64,24 +64,10 @@ def init_db():
 
 @app.route('/')
 def index():
-    # Afficher les variables de la base de données
-    db_vars = {
-        'RAILWAY_PRIVATE_DOMAIN': 'postgres.railway.internal',
-        'DATABASE_URL': 'postgresql://postgres:****@postgres.railway.internal:5432/railway',
-        'PGUSER': 'postgres',
-        'PGPASSWORD': '****',
-        'PGPORT': '5432',
-        'PGDATABASE': 'railway'
-    }
-    
-    print("Variables de la base de données:")
-    for key, value in db_vars.items():
-        print(f"{key}: {value}")
-    
     if not init_db():
         flash("Erreur de connexion à la base de données. Veuillez vérifier votre configuration.", "error")
     
-    return render_template('index.html', db_vars=db_vars)
+    return render_template('index.html')
 
 @app.route('/ajouter', methods=['POST'])
 def ajouter():
