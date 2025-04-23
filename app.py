@@ -68,36 +68,76 @@ def init_db():
 
 @app.route('/')
 def index():
+    # Afficher les variables de la base de données
+    db_vars = {
+        'RAILWAY_PRIVATE_DOMAIN': os.getenv('RAILWAY_PRIVATE_DOMAIN'),
+        'PGUSER': os.getenv('PGUSER'),
+        'PGPASSWORD': os.getenv('PGPASSWORD'),
+        'PGPORT': os.getenv('PGPORT'),
+        'PGDATABASE': os.getenv('PGDATABASE'),
+        'DATABASE_URL': os.getenv('DATABASE_URL')
+    }
+    
+    print("Variables de la base de données:")
+    for key, value in db_vars.items():
+        print(f"{key}: {value}")
+    
+    # Construire l'URL de connexion pour vérification
+    private_host = os.getenv('RAILWAY_PRIVATE_DOMAIN', 'postgres.railway.internal')
+    database_url = f"postgresql://{os.getenv('PGUSER')}:{os.getenv('PGPASSWORD')}@{private_host}:{os.getenv('PGPORT')}/{os.getenv('PGDATABASE')}"
+    print(f"URL de connexion construite: {database_url}")
+    
     if not init_db():
         flash("Erreur de connexion à la base de données. Veuillez vérifier votre configuration.", "error")
-    return render_template('index.html')
+    
+    return render_template('index.html', db_vars=db_vars)
 
 @app.route('/ajouter', methods=['POST'])
 def ajouter():
+    print("Début de la route /ajouter")
     nom = request.form['nom']
+    print(f"Nom reçu: {nom}")
+    
     conn = get_db_connection()
     if conn is None:
+        print("Échec de la connexion à la base de données")
         flash("Erreur de connexion à la base de données", "error")
         return redirect(url_for('index'))
     
     try:
+        print("Connexion réussie, création du curseur")
         cur = conn.cursor()
+        
         # Vérifier si la table existe
+        print("Vérification de l'existence de la table")
         cur.execute("SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'noms')")
         table_exists = cur.fetchone()[0]
+        print(f"Table existe: {table_exists}")
         
         if not table_exists:
-            init_db()
+            print("Table n'existe pas, initialisation de la base")
+            if not init_db():
+                print("Échec de l'initialisation de la base")
+                flash("Erreur lors de l'initialisation de la base de données", "error")
+                return redirect(url_for('index'))
         
+        print("Insertion du nom dans la base")
         cur.execute('INSERT INTO noms (nom) VALUES (%s)', (nom,))
         conn.commit()
+        print("Insertion réussie")
         flash("Nom ajouté avec succès!", "success")
     except psycopg2.Error as e:
+        print(f"Erreur PostgreSQL: {e}")
         flash(f"Erreur lors de l'ajout du nom: {e}", "error")
+    except Exception as e:
+        print(f"Erreur inattendue: {e}")
+        flash(f"Une erreur inattendue s'est produite: {e}", "error")
     finally:
+        print("Fermeture des connexions")
         cur.close()
         conn.close()
     
+    print("Redirection vers la liste")
     return redirect(url_for('liste'))
 
 @app.route('/liste')
