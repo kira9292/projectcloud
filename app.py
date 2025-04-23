@@ -25,7 +25,7 @@ def get_db_connection(max_attempts=3, delay=5):
             print(f"Tentative de connexion {attempt + 1}/{max_attempts}...")
             
             # Utiliser les variables de Railway PostgreSQL
-            database_url = os.getenv('DATABASE_URL')
+            database_url = os.getenv('DATABASE_URL','postgresql://postgres:XryfpIdaudgshtRgNYIEgisVMDccpWtn@postgres.railway.internal:5432/railway')
             print(f"URL de connexion Railway: {database_url}")
             
             if database_url:
