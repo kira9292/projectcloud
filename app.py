@@ -23,10 +23,12 @@ def get_db_connection(max_attempts=3, delay=5):
     for attempt in range(max_attempts):
         try:
             print(f"Tentative de connexion {attempt + 1}/{max_attempts}...")
-            database_url = os.getenv('DATABASE_URL')
+            # Utiliser directement ${{ Postgres.DATABASE_URL }}
+            database_url = "${{ Postgres.DATABASE_URL }}"
+            print(f"URL de connexion: {database_url}")
             
             if database_url:
-                print("Utilisation de DATABASE_URL pour la connexion")
+                print("Utilisation de ${{ Postgres.DATABASE_URL }} pour la connexion")
                 conn = psycopg2.connect(database_url, connect_timeout=10)
             else:
                 print("Utilisation des variables individuelles pour la connexion")
