@@ -1,107 +1,79 @@
 # Application Flask avec PostgreSQL
 
-Une application Flask simple qui permet d'ajouter et de visualiser des noms dans une base de données PostgreSQL.
+Une application web simple développée avec Flask et PostgreSQL, déployée sur Railway.
 
-## Configuration du déploiement sur Railway
+## 🚀 Application en ligne
 
-### Prérequis
-- Un compte GitHub
-- Un compte Railway
-- L'interface de ligne de commande Railway installée
+L'application est disponible en ligne à l'adresse suivante :
+[https://projectcloud-production.up.railway.app/](https://projectcloud-production.up.railway.app/)
 
-### Étapes de configuration
+## 📋 Fonctionnalités
 
-1. **Configuration de Railway**
-   - Créez un nouveau projet sur Railway
-   - Ajoutez un service PostgreSQL :
-     1. Cliquez sur "New Project"
-     2. Sélectionnez "Provision PostgreSQL"
-     3. Attendez que la base de données soit créée
-   - Obtenez votre token d'authentification :
-     ```bash
-     railway token
-     ```
+- Ajout de noms dans une base de données PostgreSQL
+- Affichage de la liste des noms
+- Interface utilisateur moderne et responsive
+- Gestion des erreurs et messages de confirmation
 
-2. **Configuration des secrets GitHub**
-   - Allez dans les paramètres de votre dépôt GitHub
-   - Naviguez vers "Secrets and variables" > "Actions"
-   - Ajoutez le secret suivant :
-     - `RAILWAY_TOKEN` : Votre token d'authentification Railway
+## 🛠️ Technologies utilisées
 
-3. **Configuration de la base de données**
-   - Railway fournit automatiquement les variables d'environnement suivantes :
-     - `DATABASE_URL` : L'URL complète de connexion à la base de données (recommandé)
-     - OU les variables individuelles :
-       - `PGHOST` : L'hôte de la base de données
-       - `PGDATABASE` : Le nom de la base de données
-       - `PGUSER` : L'utilisateur de la base de données
-       - `PGPASSWORD` : Le mot de passe de la base de données
-       - `PGPORT` : Le port de la base de données
-   - L'application utilise `DATABASE_URL` si disponible, sinon elle utilise les variables individuelles
+- **Backend** : Python, Flask
+- **Base de données** : PostgreSQL
+- **Déploiement** : Railway
+- **Frontend** : HTML, CSS (Inter font)
 
-### Déploiement automatique
+## 🚀 Déploiement
 
-Le déploiement est automatiquement déclenché lorsque des modifications sont poussées sur la branche `main`.
+L'application est déployée sur Railway, une plateforme de déploiement cloud qui offre :
+- Déploiement automatique depuis GitHub
+- Base de données PostgreSQL intégrée
+- Mise à l'échelle automatique
+- Monitoring et logs
 
-Le workflow CI/CD :
-1. Configure l'environnement Python
-2. Installe les dépendances
-3. Exécute les tests (optionnel)
-4. Déploie sur Railway
+## 🔧 Configuration requise
 
-### Déploiement manuel
+- Python 3.x
+- PostgreSQL
+- pip (gestionnaire de paquets Python)
 
-Pour déployer manuellement :
+## 📦 Installation
+
+1. Clonez le dépôt :
 ```bash
-railway up
+git clone [URL_DU_REPO]
+cd [NOM_DU_REPO]
 ```
 
-## Développement local
-
-1. Clonez le dépôt
-2. Créez un environnement virtuel :
-```bash
-python -m venv .venv
-source .venv/bin/activate  # Sur Windows: .venv\Scripts\activate
-```
-
-3. Installez les dépendances :
+2. Installez les dépendances :
 ```bash
 pip install -r requirements.txt
 ```
 
-4. Configurez les variables d'environnement dans un fichier `.env` :
+3. Configurez les variables d'environnement :
 ```bash
-# Option 1: Utiliser DATABASE_URL (recommandé)
-DATABASE_URL=postgresql://user:password@host:port/database
-
-# Option 2: Utiliser les variables individuelles
-PGHOST=postgres.railway.internal
-PGDATABASE=railway
-PGUSER=postgres
-PGPASSWORD=votre_mot_de_passe
-PGPORT=5432
-
-FLASK_SECRET_KEY=votre_clé_secrète
+FLASK_APP=app.py
+FLASK_ENV=development
 ```
 
-5. Lancez l'application :
+4. Lancez l'application :
 ```bash
-python app.py
+flask run
 ```
 
-## Structure du projet
+## 🔒 Sécurité
 
-```
-.
-├── .github/
-│   └── workflows/
-│       └── main.yml
-├── app.py
-├── Dockerfile
-├── requirements.txt
-├── templates/
-│   ├── index.html
-│   └── liste.html
-└── README.md
-``` 
+- Les variables d'environnement sensibles sont gérées par Railway
+- Les connexions à la base de données sont sécurisées
+- Protection contre les injections SQL
+
+## 📝 Licence
+
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+
+## 🤝 Contribution
+
+Les contributions sont les bienvenues ! N'hésitez pas à :
+1. Fork le projet
+2. Créer une branche pour votre fonctionnalité
+3. Commiter vos changements
+4. Pousser vers la branche
+5. Ouvrir une Pull Request 
