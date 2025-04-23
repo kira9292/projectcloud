@@ -24,15 +24,24 @@ def get_db_connection(max_attempts=3, delay=5):
         try:
             print(f"Tentative de connexion {attempt + 1}/{max_attempts}...")
             
-            # Utiliser le nom d'hôte privé de Railway
-            private_host = os.getenv('RAILWAY_PRIVATE_DOMAIN', 'postgres.railway.internal')
-            print(f"Tentative de connexion à l'hôte privé: {private_host}")
+            # Utiliser les variables de Railway PostgreSQL
+            database_url = os.getenv('Postgres.DATABASE_URL')
+            print(f"URL de connexion Railway: {database_url}")
             
-            # Construire l'URL de connexion pour le réseau privé
-            database_url = f"postgresql://{os.getenv('PGUSER')}:{os.getenv('PGPASSWORD')}@{private_host}:{os.getenv('PGPORT')}/{os.getenv('PGDATABASE')}"
-            print(f"URL de connexion: {database_url}")
-            
-            conn = psycopg2.connect(database_url, connect_timeout=10)
+            if database_url:
+                print("Utilisation de Postgres.DATABASE_URL pour la connexion")
+                conn = psycopg2.connect(database_url, connect_timeout=10)
+            else:
+                # Fallback sur les variables individuelles
+                print("Postgres.DATABASE_URL non trouvé, tentative avec les variables individuelles")
+                conn = psycopg2.connect(
+                    host=os.getenv('RAILWAY_PRIVATE_DOMAIN', 'postgres.railway.internal'),
+                    database=os.getenv('Postgres.PGDATABASE', 'railway'),
+                    user=os.getenv('Postgres.PGUSER', 'postgres'),
+                    password=os.getenv('Postgres.PGPASSWORD','XryfpIdaudgshtRgNYIEgisVMDccpWtn'),
+                    port=os.getenv('Postgres.PGPORT', '5432'),
+                    connect_timeout=10
+                )
             print("Connexion réussie!")
             return conn
         except psycopg2.Error as e:
@@ -71,21 +80,16 @@ def index():
     # Afficher les variables de la base de données
     db_vars = {
         'RAILWAY_PRIVATE_DOMAIN': os.getenv('RAILWAY_PRIVATE_DOMAIN'),
-        'PGUSER': os.getenv('PGUSER'),
-        'PGPASSWORD': os.getenv('PGPASSWORD'),
-        'PGPORT': os.getenv('PGPORT'),
-        'PGDATABASE': os.getenv('PGDATABASE'),
-        'DATABASE_URL': os.getenv('DATABASE_URL')
+        'Postgres.DATABASE_URL': os.getenv('Postgres.DATABASE_URL'),
+        'Postgres.PGUSER': os.getenv('Postgres.PGUSER'),
+        'Postgres.PGPASSWORD': os.getenv('Postgres.PGPASSWORD'),
+        'Postgres.PGPORT': os.getenv('Postgres.PGPORT'),
+        'Postgres.PGDATABASE': os.getenv('Postgres.PGDATABASE')
     }
     
     print("Variables de la base de données:")
     for key, value in db_vars.items():
         print(f"{key}: {value}")
-    
-    # Construire l'URL de connexion pour vérification
-    private_host = os.getenv('RAILWAY_PRIVATE_DOMAIN', 'postgres.railway.internal')
-    database_url = f"postgresql://{os.getenv('PGUSER')}:{os.getenv('PGPASSWORD')}@{private_host}:{os.getenv('PGPORT')}/{os.getenv('PGDATABASE')}"
-    print(f"URL de connexion construite: {database_url}")
     
     if not init_db():
         flash("Erreur de connexion à la base de données. Veuillez vérifier votre configuration.", "error")
