@@ -24,24 +24,11 @@ def get_db_connection(max_attempts=3, delay=5):
         try:
             print(f"Tentative de connexion {attempt + 1}/{max_attempts}...")
             
-            # Utiliser les variables de Railway PostgreSQL
-            database_url = os.getenv('DATABASE_URL','postgresql://postgres:XryfpIdaudgshtRgNYIEgisVMDccpWtn@postgres.railway.internal:5432/railway')
-            print(f"URL de connexion Railway: {database_url}")
+            # URL de connexion fixe
+            database_url = "postgresql://postgres:XryfpIdaudgshtRgNYIEgisVMDccpWtn@postgres.railway.internal:5432/railway"
+            print(f"URL de connexion: {database_url}")
             
-            if database_url:
-                print("Utilisation de DATABASE_URL pour la connexion")
-                conn = psycopg2.connect(database_url, connect_timeout=10)
-            else:
-                # Fallback sur les variables individuelles
-                print("DATABASE_URL non trouvé, tentative avec les variables individuelles")
-                conn = psycopg2.connect(
-                    host=os.getenv('RAILWAY_PRIVATE_DOMAIN', 'postgres.railway.internal'),
-                    database=os.getenv('PGDATABASE', 'railway'),
-                    user=os.getenv('PGUSER', 'postgres'),
-                    password=os.getenv('PGPASSWORD','XryfpIdaudgshtRgNYIEgisVMDccpWtn'),
-                    port=os.getenv('PGPORT', '5432'),
-                    connect_timeout=10
-                )
+            conn = psycopg2.connect(database_url, connect_timeout=10)
             print("Connexion réussie!")
             return conn
         except psycopg2.Error as e:
@@ -79,12 +66,12 @@ def init_db():
 def index():
     # Afficher les variables de la base de données
     db_vars = {
-        'RAILWAY_PRIVATE_DOMAIN': os.getenv('RAILWAY_PRIVATE_DOMAIN'),
-        'DATABASE_URL': os.getenv('DATABASE_URL'),
-        'PGUSER': os.getenv('PGUSER'),
-        'PGPASSWORD': os.getenv('PGPASSWORD'),
-        'PGPORT': os.getenv('PGPORT'),
-        'PGDATABASE': os.getenv('PGDATABASE')
+        'RAILWAY_PRIVATE_DOMAIN': 'postgres.railway.internal',
+        'DATABASE_URL': 'postgresql://postgres:****@postgres.railway.internal:5432/railway',
+        'PGUSER': 'postgres',
+        'PGPASSWORD': '****',
+        'PGPORT': '5432',
+        'PGDATABASE': 'railway'
     }
     
     print("Variables de la base de données:")
